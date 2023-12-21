@@ -1,0 +1,19 @@
+--- kernel/sys.c	2022-11-23 23:40:08.876516133 +0530
++++ /usr/src/abhijay/linux-5.19.8/kernel/sys.c	2022-11-24 06:08:25.543332986 +0530
+@@ -207,6 +207,16 @@
+ 	return error;
+ }
+ 
++SYSCALL_DEFINE4(kern_2d_memcpy, float**, mat1, float**, mat2, int, row, int, col){
++	float mat[row][col];
++	long cop = __copy_from_user(mat, mat1, row*col);
++	if(cop<0 || cop == row*col) return -EFAULT;
++	long ret = __copy_to_user(mat2, mat, row*col);
++	if(ret<0 || ret==row*col) return -EFAULT;
++	printf(KERN_INFO "Syscall executed successfully!");
++	return cop;
++}
++
+ SYSCALL_DEFINE3(setpriority, int, which, int, who, int, niceval)
+ {
+ 	struct task_struct *g, *p;
